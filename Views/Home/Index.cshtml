@@ -1,0 +1,40 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="row">
+    <div class="col-3"><button class="btn btn-success" onclick="getById();">GetById</button></div>
+    <div class="col-3"><button class="btn btn-success" onclick="queryByCustomerId();">QueryByCustomerId</button></div>
+    <div class="col-3"><button class="btn btn-success" onclick="queryProductReports();">QueryProductReports</button></div>
+    <div class="col-3"><button class="btn btn-success" onclick="getSaleTotal();">GetSaleTotal</button></div>
+
+    <div class="col-3"><button class="btn btn-success" onclick="countAndAny();">CountAndAny</button></div>
+</div>
+
+
+<script>
+    function getById() {
+        $.getJSON('@Url.Content("~/home/get")');
+    }
+
+    function queryByCustomerId() {
+        $.getJSON('@Url.Content("~/home/queryByCustomerId")');
+    }
+
+    function queryProductReports() {
+        $.getJSON('@Url.Content("~/home/queryProductReports")');
+    }
+
+    function getSaleTotal() {
+        $.getJSON('@Url.Content("~/home/getSaleTotal")');
+    }
+
+    function foreachOrders() {
+        $.getJSON('@Url.Content("~/home/foreachOrders")');
+    }
+
+    function countAndAny() {
+        $.getJSON('@Url.Content("~/home/countAndAny")');
+    }
+
+</script>
