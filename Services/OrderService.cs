@@ -64,16 +64,15 @@ namespace EFCoreWeb.Services
         }
 
 
-        Func<DataDBContext, decimal, SingleQueryingEnumerable<int>> compiledProductReports =
-            EF.CompileQuery<DataDBContext, decimal, SingleQueryingEnumerable<int>>(
+        Func<DataDBContext, decimal, IQueryable<int>> errorCompiled =
+            EF.CompileQuery<DataDBContext, decimal, IQueryable<int>>(
             (ctx, total) => ctx.OrderItems.AsNoTracking().IgnoreAutoIncludes()
-                .GroupBy(a => a.ProductId).Select(a => new
-                {
-                    ProductId = a.Key,
-                    Quantity = a.Sum(b => b.Quantity),
-                    Price = a.Sum(b => b.Price),
-                }).Where(a => a.Price > total).Select(a => a.ProductId) as SingleQueryingEnumerable<int>
-            );
+            .GroupBy(a => a.ProductId).Select(a => new
+            {
+                ProductId = a.Key,
+                Quantity = a.Sum(b => b.Quantity),
+                Price = a.Sum(b => b.Price),
+            }).Where(a => a.Price > total).Select(a => a.ProductId));
 
         [Benchmark]
         public async Task ProductReports()
@@ -85,6 +84,15 @@ namespace EFCoreWeb.Services
             //        Price = a.Sum(b => b.Price),
             //    }).Where(a=>a.Price>100000).Select(a=>a.ProductId)
             //    .ToListAsync();
+            var compiledProductReports = EF.CompileQuery(
+                (DataDBContext ctx, decimal total)
+                    => ctx.OrderItems.AsNoTracking().IgnoreAutoIncludes()
+                .GroupBy(a => a.ProductId).Select(a => new
+                {
+                    ProductId = a.Key,
+                    Quantity = a.Sum(b => b.Quantity),
+                    Price = a.Sum(b => b.Price),
+                }).Where(a => a.Price > total).Select(a => a.ProductId));
 
             var productIds = compiledProductReports(_dataDBContext, 100000).ToList();
 
